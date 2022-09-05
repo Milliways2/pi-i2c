@@ -30,12 +30,12 @@ int i2cOpen(unsigned i2cBus, unsigned i2cAddr) ;
 int SMBusOpen(unsigned i2cBus, unsigned i2cAddr);
 
 int i2cRead			(unsigned handle) ;
-int i2cReadByte		(unsigned handle, unsigned i2cReg) ;
-int i2cReadWord     (unsigned handle, unsigned i2cReg) ;
+int i2cRead8		(unsigned handle, unsigned i2cReg) ;
+int i2cRead16     (unsigned handle, unsigned i2cReg) ;
 
 int i2cWrite		(unsigned handle, int data) ;
-int i2cWriteByte    (unsigned handle, unsigned i2cReg, int data) ;
-int i2cWriteWord    (unsigned handle, unsigned i2cReg, int data) ;
+int i2cWrite8    (unsigned handle, unsigned i2cReg, int data) ;
+int i2cWrite16    (unsigned handle, unsigned i2cReg, int data) ;
 
 #ifdef __cplusplus
 }

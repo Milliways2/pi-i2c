@@ -1,12 +1,16 @@
+/*
+This program writes to port B of a MCP23017 16-Bit I/O Expander.
+ */
 #include <pi-i2c.h>
 #include <MCP23017.h>
 #include <stdio.h>
 #include <stdlib.h>
 // MCP23017
-// 2022-07-11
+// 2022-09-05
 
-const int i2cBus = 1;
-const int i2cAddr = 0x20;
+const int i2cBus = 1;    // All Pi models with 40 pin header
+unsigned i2cAddr = 0x20; // default for MCP23017
+extern int ehand;        //  identify MCP23017 16-Bit I/O Expander on I2C bus
 
 #define IODIRA	0x00
 #define IPOLA	0x02
@@ -34,14 +38,21 @@ const int i2cAddr = 0x20;
 
 
 int main(){
-   int handle = i2cOpen(i2cBus, i2cAddr);
-//    int handle = SMBusOpen(i2cBus, i2cAddr);
-   if(handle < 0) exit(handle);
+  ehand = i2cOpen(i2cBus, i2cAddr);
+  if (ehand < 0)
+    exit(ehand);
+  // Check if device exists
+  if (i2cRead8(ehand, 0) < 0) {
+    printf("No device at address %02x\n", i2cAddr);
+    exit(-1);
+  }
+
+  unsigned value = 0xAA;
+  printf("writes %02X to port B of a MCP23017 16-Bit I/O Expander\n", value);
 
 // set all of port B to outputs
-   i2cWriteByte(handle, IODIRB, 0x00);	 // IODIRB register
-//  0x12 tells the device that we are writing to the pins in directory A
-   i2cWriteByte(handle, GPIOB, 0xAA);	 // GPIOB register
+   i2cWrite8(ehand, IODIRB, 0x00);	 // IODIRB register
+   i2cWrite8(ehand, GPIOB, value);	 // GPIOB register
 
    return 0;
 }

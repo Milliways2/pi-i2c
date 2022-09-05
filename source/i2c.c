@@ -91,7 +91,7 @@ int i2cRead(unsigned handle) {
 }
 
 // Read a single byte from the specified register
-int i2cReadByte(unsigned handle, unsigned i2cReg) {
+int i2cRead8(unsigned handle, unsigned i2cReg) {
   union i2c_smbus_data data;
 
   if (i2c_smbus_access(handle, I2C_SMBUS_READ, i2cReg, I2C_SMBUS_BYTE_DATA,
@@ -102,7 +102,7 @@ int i2cReadByte(unsigned handle, unsigned i2cReg) {
 }
 
 // Read a single word (16 bits) from the specified register
-int i2cReadWord(unsigned handle, unsigned i2cReg) {
+int i2cRead16(unsigned handle, unsigned i2cReg) {
   union i2c_smbus_data data;
 
   if (i2c_smbus_access(handle, I2C_SMBUS_READ, i2cReg, I2C_SMBUS_WORD_DATA, &data))
@@ -117,7 +117,7 @@ int i2cWrite(unsigned handle, int data) {
 }
 
 // Write a single byte to a device, to the specified register
-int i2cWriteByte(unsigned handle, unsigned i2cReg, int value) {
+int i2cWrite8(unsigned handle, unsigned i2cReg, int value) {
   union i2c_smbus_data data;
 
   data.byte = value;
@@ -126,7 +126,7 @@ int i2cWriteByte(unsigned handle, unsigned i2cReg, int value) {
 }
 
 // Write a single word (16 bits) to the specified register
-int i2cWriteWord(unsigned handle, unsigned i2cReg, int value) {
+int i2cWrite16(unsigned handle, unsigned i2cReg, int value) {
   union i2c_smbus_data data;
 
   data.word = value;

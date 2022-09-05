@@ -37,22 +37,22 @@ int setup_egpio(int gpio, int port, int direction, int pud) {
    *		port 0 (port A) or 1 (port B)
    *		direction: 0=IN, 1=OUT
    *		pud: 0=None 1=Up */
-  unsigned dirreg = i2cReadByte(ehand, IODIRA + port);
+  unsigned dirreg = i2cRead8(ehand, IODIRA + port);
   unsigned mask = 1 << gpio;
   if (direction) {
     // input
     dirreg |= mask;
-    unsigned pubreg = i2cReadByte(ehand, GPPUA + port);
+    unsigned pubreg = i2cRead8(ehand, GPPUA + port);
     if (pud)
       pubreg |= mask;
     else
       pubreg &= ~mask;
-    i2cWriteByte(ehand, GPPUA + port, pubreg); // GPPU register
+    i2cWrite8(ehand, GPPUA + port, pubreg); // GPPU register
   } else {
     // output
     dirreg &= ~mask;
   }
-  return i2cWriteByte(ehand, IODIRA + port, dirreg); // IODIR register
+  return i2cWrite8(ehand, IODIRA + port, dirreg); // IODIR register
 }
 
 int output_egpio(int gpio, int port, int value) {
@@ -61,7 +61,7 @@ int output_egpio(int gpio, int port, int value) {
    *		port 0 (port A) or 1 (port B)
    *		value - 0/1 or False/True or LOW/HIGH */
 
-  unsigned datreg = i2cReadByte(ehand, OLATA + port);
+  unsigned datreg = i2cRead8(ehand, OLATA + port);
   unsigned mask = 1 << gpio;
 
   if (value) {
@@ -69,7 +69,7 @@ int output_egpio(int gpio, int port, int value) {
   } else {
     datreg &= ~mask;
   }
-  return i2cWriteByte(ehand, OLATA + port, datreg); // OLAT register
+  return i2cWrite8(ehand, OLATA + port, datreg); // OLAT register
 }
 
 int input_egpio(int gpio, int port) {
@@ -78,7 +78,7 @@ int input_egpio(int gpio, int port) {
    *		port 0 (port A) or 1 (port B)
    *		Returns HIGH=1=True or LOW=0=False */
   unsigned mask = 1 << gpio;
-  unsigned datreg = i2cReadByte(ehand, GPIOA + port);
+  unsigned datreg = i2cRead8(ehand, GPIOA + port);
   mask = (1 << gpio % 32);
   unsigned value = datreg & mask;
   return value ? 1 : 0;
@@ -89,53 +89,53 @@ int setup_egpio_port(unsigned port, unsigned dirreg) {
   /* Set all channel on specified port
    *		port 0 (port A) or 1 (port B)
    *		dirreg: 8 bit mask to set 0=IN, 1=OUT */
-  return i2cWriteByte(ehand, IODIRA + port, dirreg); // IODIR register
+  return i2cWrite8(ehand, IODIRA + port, dirreg); // IODIR register
 }
 
 int setup_egpio_port_pud(unsigned port, unsigned pudreg) {
   /* Set pull on specified port
    *	port 0 (port A) or 1 (port B)
    *	pudreg: 8 bit mask to set pull 0=None 1=Up */
-  return i2cWriteByte(ehand, GPPUA + port, pudreg); // GPPU register
+  return i2cWrite8(ehand, GPPUA + port, pudreg); // GPPU register
 }
 
 int output_egpio_port(unsigned port, unsigned datreg) {
   /* Output to all channel on specified port
    *	port 0 (port A) or 1 (port B)
    *	datreg -  8 bit mask to set 0/1 */
-  return i2cWriteByte(ehand, OLATA + port, datreg); // OLAT register
+  return i2cWrite8(ehand, OLATA + port, datreg); // OLAT register
 }
 
 int input_egpio_port(unsigned port) {
   /* Returns the GPIO level.
    *	port 0 (port A) or 1 (port B)
    *	Returns 8 bit levels */
-  return i2cReadByte(ehand, GPIOA + port);
+  return i2cRead8(ehand, GPIOA + port);
 }
 
 // ________  Device operations
 int setup_egpio_dev(unsigned dirreg) {
   /* Set all channels
    *	dirreg: 16 bit mask to set 0=IN, 1=OUT */
-  return i2cWriteWord(ehand, IODIRA, dirreg); // IODIR register
+  return i2cWrite16(ehand, IODIRA, dirreg); // IODIR register
 }
 
 int setup_egpio_dev_pud(unsigned pudreg) {
   /* Set pull on all channels
    *	pudreg: 16 bit mask to set pull 0=None 1=Up */
-  return i2cWriteWord(ehand, GPPUA, pudreg); // GPPU register
+  return i2cWrite16(ehand, GPPUA, pudreg); // GPPU register
 }
 
 int output_egpio_dev(unsigned datreg) {
   /* Output to all channel
    *	datreg -  16 bit mask to set 0/1 */
-  return i2cWriteWord(ehand, OLATA, datreg); // OLAT register
+  return i2cWrite16(ehand, OLATA, datreg); // OLAT register
 }
 
 int input_egpio_dev() {
   /* Returns the GPIO level.
    *	Returns 16  bit levels */
-  return i2cReadWord(ehand, GPIOA);
+  return i2cRead16(ehand, GPIOA);
 }
 
 #ifdef __cplusplus

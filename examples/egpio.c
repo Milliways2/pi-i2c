@@ -1,5 +1,5 @@
-#include <pi-i2c.h>
 #include <MCP23017.h>
+#include <pi-i2c.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -18,23 +18,26 @@
 
  * toggle GPIO0 port B 3 times (assumes LED connected)
  */
-// 2022-08-08
-
+// 2022-09-05
 
 const int i2cBus = 1;    // All Pi models with 40 pin header
 unsigned i2cAddr = 0x20; // default for MCP23017
-extern int ehand;       //  identify MCP23017 16-Bit I/O Expander on I2C bus
+extern int ehand;        //  identify MCP23017 16-Bit I/O Expander on I2C bus
 
 int main() {
   ehand = i2cOpen(i2cBus, i2cAddr);
   if (ehand < 0)
     exit(ehand);
+  // Check if device exists
+  if (i2cRead8(ehand, 0) < 0) {
+    printf("No device at address %02x\n", i2cAddr);
+    exit(-1);
+  }
 
   printf("MCP23017 16-Bit I/O Expander test\n");
 
-	int err = setup_egpio_dev(0xFF);	// set all GPIO input
-	printf("err %d\n", err);
-	setup_egpio_dev_pud(0xFF);	// set pullup on all GPIO
+  setup_egpio_dev(0xFF);     // set all GPIO input
+  setup_egpio_dev_pud(0xFF); // set pullup on all GPIO
   setup_egpio_port(0, 0x5F);
   output_egpio_port(0, 0xFF);
 
@@ -48,7 +51,6 @@ int main() {
 
   int count = 3;
   while (count--) {
-
     output_egpio(0, 1, 1); // set GPIO0 port B to 1
     sleep(1);
     output_egpio(0, 1, 0); // set GPIO0 port B to 0
