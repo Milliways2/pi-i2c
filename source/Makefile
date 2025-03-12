@@ -6,6 +6,7 @@
 VERSION=$(shell cat ../VERSION)
 DESTDIR?=/usr
 PREFIX?=/local
+PYLIB?=/usr/lib/python3/dist-packages
 
 LDCONFIG?=ldconfig
 V=1
@@ -61,8 +62,13 @@ install:	$(DYNAMIC)
 	$Q ln -sf $(DESTDIR)$(PREFIX)/lib/lib$(LIBNAME).so.$(VERSION)	$(DESTDIR)/lib/lib$(LIBNAME).so
 	$Q $(LDCONFIG)
 
+	@ echo "[Install man pages]"
 	$Q mkdir -p		$(DESTDIR)$(PREFIX)/share/man/man3
 	$Q install -m 0644 $(MANPAGES) 	$(DESTDIR)$(PREFIX)/share/man/man3
+	
+	@ echo "[Install python overlays]"
+	mkdir -p $(PYLIB)
+	install -m 0644 pi_i2c.py 	$(PYLIB)/pi_i2c.py
 
 .PHONY:	uninstall
 uninstall:
